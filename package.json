@@ -1,0 +1,19 @@
+{
+  "name": "meme-studio-extension",
+  "version": "1.0.0",
+  "description": "Chrome extension for creating and browsing memes",
+  "main": "background.js",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "memes",
+    "image-editor"
+  ],
+  "author": "Meme Studio Contributors",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.11"
+  }
+}

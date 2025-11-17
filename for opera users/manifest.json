@@ -1,0 +1,26 @@
+
+{
+  "manifest_version": 3,
+  "name": "Meme Studio",
+  "version": "1.0.0",
+  "description": "Create and browse memes from your browser sidebar",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://i.redd.it/*",
+    "https://i.imgur.com/*",
+    "https://media.giphy.com/*",
+    "https://api.imgflip.com/*",
+    "https://meme-api.com/*",
+    "https://api.giphy.com/*"
+  ],
+  "action": {
+    "default_title": "Open Meme Studio",
+    "default_popup": "sidebar.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'self'"
+  }
+}

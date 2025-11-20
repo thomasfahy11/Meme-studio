@@ -10,7 +10,8 @@
     "https://media.giphy.com/*",
     "https://api.imgflip.com/*",
     "https://meme-api.com/*",
-    "https://api.giphy.com/*"
+    "https://tenor.googleapis.com/*",
+    "https://media.tenor.com/*"
   ],
   "action": {
     "default_title": "Open Meme Studio"

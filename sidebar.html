@@ -56,7 +56,7 @@
     /* Header */
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      padding: 20px 24px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -118,22 +118,24 @@
     /* Navigation Tabs */
     .nav-tabs {
       display: flex;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-bottom: 2px solid var(--border);
       overflow-x: auto;
-      padding: 8px 12px 0 12px;
-      gap: 6px;
+      padding: 8px 16px 0 16px;
+      gap: 8px;
+      box-shadow: 0 2px 8px var(--shadow);
     }
 
     .nav-tab {
       flex: 1;
-      padding: 12px 20px;
+      min-width: 100px;
+      padding: 14px 20px;
       border: none;
       background: transparent;
       color: var(--text-secondary);
       cursor: pointer;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       white-space: nowrap;
@@ -142,33 +144,39 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .nav-tab:hover {
-      color: var(--primary);
-      background: var(--bg-tertiary);
-      transform: translateY(-2px);
+      color: white;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     .nav-tab.active {
-      color: var(--primary);
-      background: var(--bg-tertiary);
-      box-shadow: 0 -2px 8px var(--shadow);
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+      transform: translateY(-2px);
     }
 
     .nav-tab.active::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 12px;
-      right: 12px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      border-radius: 3px 3px 0 0;
+      bottom: -2px;
+      left: 20%;
+      right: 20%;
+      height: 4px;
+      background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 -2px 8px rgba(245, 87, 108, 0.5);
     }
 
     .nav-tab i {
-      font-size: 16px;
+      font-size: 18px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     }
 
     /* Content Sections */
@@ -192,40 +200,52 @@
 
     /* Input Styles */
     .input-group {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .input-label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text-secondary);
-      margin-bottom: 8px;
-      letter-spacing: 0.3px;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-label::before {
+      content: '';
+      width: 4px;
+      height: 16px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 2px;
     }
 
     input[type="text"],
     input[type="file"],
     select {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border: 2px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       background: var(--bg-secondary);
       color: var(--text-primary);
-      font-size: 14px;
+      font-size: 15px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 4px var(--shadow);
+      box-shadow: 0 2px 6px var(--shadow);
+      font-weight: 500;
     }
 
     input[type="text"]:focus,
     select:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 4px 12px var(--shadow-md);
-      transform: translateY(-1px);
+      background: var(--bg-primary);
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), 0 6px 16px var(--shadow-md);
+      transform: translateY(-2px);
     }
 
     input[type="file"] {
@@ -270,30 +290,36 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      font-weight: 700;
     }
 
     .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+      background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%);
     }
 
     .btn-primary:active {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
     }
 
     .btn-secondary {
-      background: var(--bg-tertiary);
+      background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
       color: var(--text-primary);
-      box-shadow: 0 2px 8px var(--shadow);
+      box-shadow: 0 3px 10px var(--shadow);
+      border: 2px solid var(--border);
+      font-weight: 600;
     }
 
     .btn-secondary:hover {
-      background: var(--border);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px var(--shadow-md);
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px var(--shadow-md);
+      border-color: var(--primary);
     }
 
     .btn:disabled {
@@ -309,6 +335,9 @@
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 16px;
       margin-top: 20px;
+      max-height: calc(100vh - 280px);
+      overflow-y: auto;
+      padding-right: 8px;
     }
 
     .gallery-item {
@@ -319,7 +348,8 @@
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--bg-secondary);
       aspect-ratio: 1;
-      box-shadow: 0 4px 12px var(--shadow);
+      box-shadow: 0 4px 12px var(--shadow-md);
+      border: 2px solid transparent;
     }
 
     .gallery-item::before {
@@ -329,15 +359,16 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(240, 147, 251, 0.3));
       opacity: 0;
       transition: opacity 0.3s;
       z-index: 1;
     }
 
     .gallery-item:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 12px 32px var(--shadow-lg);
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 16px 40px rgba(102, 126, 234, 0.3);
+      border-color: var(--primary);
     }
 
     .gallery-item:hover::before {
@@ -378,6 +409,33 @@
 
     .gallery-item:hover .gallery-overlay {
       opacity: 1;
+    }
+
+    /* Provider Badge */
+    .provider-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+    }
+
+    .provider-badge.giphy {
+      background: linear-gradient(135deg, #ff6666 0%, #9933ff 100%);
+      color: white;
+    }
+
+    .provider-badge i {
+      font-size: 12px;
     }
 
     /* Loading Spinner */
@@ -517,9 +575,29 @@
     .modal-controls {
       padding: 20px;
       border-top: 2px solid var(--border);
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 12px;
+      background: var(--bg-tertiary);
+    }
+
+    .modal-controls .btn {
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .modal-controls .btn span {
+      display: inline;
+    }
+
+    @media (max-width: 600px) {
+      .modal-controls {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .modal-controls .btn span {
+        display: none;
+      }
     }
 
     /* Text Editor Controls */
@@ -616,17 +694,309 @@
     }
 
     /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 12px 16px;
+      }
+
+      .header-title {
+        font-size: 18px;
+      }
+
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+
+      .nav-tabs {
+        padding: 6px 8px 0 8px;
+        gap: 4px;
+      }
+
+      .nav-tab {
+        padding: 10px 12px;
+        font-size: 12px;
+        min-width: 80px;
+      }
+
+      .nav-tab i {
+        font-size: 16px;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        max-height: calc(100vh - 220px);
+      }
+
+      .content {
+        padding: 12px 14px;
+      }
+
+      .input-label {
+        font-size: 11px;
+      }
+
+      input[type="text"],
+      input[type="file"],
+      select {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .btn {
+        padding: 10px 18px;
+        font-size: 13px;
+      }
+
+      .modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
+      }
+
+      .modal-image-container {
+        padding: 12px;
+      }
+
+      .modal-image {
+        max-height: 50vh;
+      }
+
+      .modal-controls {
+        padding: 12px;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .text-editor,
+      .filter-controls {
+        padding: 12px;
+      }
+
+      .control-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .draggable-text {
+        font-size: 12px;
+      }
+
+      .text-content {
+        font-size: 32px;
+      }
+    }
+
     @media (max-width: 480px) {
+      .header {
+        padding: 10px 12px;
+      }
+
       .header-title {
         font-size: 16px;
+      }
+
+      .header-title i {
+        font-size: 18px;
+      }
+
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+
+      .nav-tabs {
+        padding: 4px 6px 0 6px;
+        gap: 3px;
+      }
+
+      .nav-tab {
+        padding: 8px 10px;
+        font-size: 11px;
+        min-width: 70px;
+      }
+
+      .nav-tab i {
+        font-size: 14px;
       }
 
       .gallery {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         gap: 8px;
+        max-height: calc(100vh - 200px);
+      }
+
+      .content {
+        padding: 10px 12px;
+      }
+
+      .input-group {
+        margin-bottom: 12px;
+      }
+
+      .input-label {
+        font-size: 10px;
+        margin-bottom: 6px;
+      }
+
+      input[type="text"],
+      input[type="file"],
+      select {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .btn {
+        padding: 8px 14px;
+        font-size: 12px;
+      }
+
+      .modal-content {
+        max-width: 98vw;
+        max-height: 98vh;
+        border-radius: 12px;
+      }
+
+      .modal-image-container {
+        padding: 8px;
+      }
+
+      .modal-image {
+        max-height: 45vh;
+      }
+
+      .modal-controls {
+        padding: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .modal-controls .btn {
+        padding: 8px;
+        font-size: 11px;
+      }
+
+      .modal-controls .btn span {
+        display: none;
+      }
+
+      .modal-controls .btn i {
+        margin: 0;
+      }
+
+      .text-editor,
+      .filter-controls {
+        padding: 10px;
+        margin-top: 12px;
+      }
+
+      .text-editor h3,
+      .filter-controls h3 {
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      textarea#textInput {
+        min-height: 80px;
+        font-size: 13px;
+        padding: 10px 12px;
       }
 
       .control-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .filter-slider {
+        margin-bottom: 12px;
+      }
+
+      .filter-label {
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      input[type="range"] {
+        height: 6px;
+      }
+
+      input[type="color"] {
+        width: 40px;
+        height: 32px;
+      }
+
+      .color-picker-wrapper span {
+        font-size: 12px;
+      }
+
+      .draggable-text {
+        padding: 6px;
+        font-size: 10px;
+      }
+
+      .text-content {
+        font-size: 28px;
+      }
+
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+        top: 12px;
+        right: 12px;
+      }
+
+      .empty-state {
+        padding: 60px 16px;
+      }
+
+      .empty-state i {
+        font-size: 56px;
+        margin-bottom: 16px;
+      }
+
+      .empty-state h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+
+      .empty-state p {
+        font-size: 13px;
+      }
+
+      .toast {
+        bottom: 16px;
+        right: 16px;
+        padding: 12px 18px;
+        font-size: 13px;
+      }
+
+      .provider-badge {
+        font-size: 9px;
+        padding: 3px 6px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .header-title {
+        font-size: 14px;
+      }
+
+      .nav-tab {
+        padding: 6px 8px;
+        font-size: 10px;
+        min-width: 60px;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+        gap: 6px;
+      }
+
+      .modal-controls {
         grid-template-columns: 1fr;
       }
     }
@@ -634,30 +1004,39 @@
     /* Empty State */
     .empty-state {
       text-align: center;
-      padding: 80px 20px;
+      padding: 100px 20px;
       color: var(--text-secondary);
+      animation: fadeIn 0.5s ease-in;
     }
 
     .empty-state i {
-      font-size: 72px;
-      margin-bottom: 20px;
-      opacity: 0.4;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      font-size: 96px;
+      margin-bottom: 24px;
+      opacity: 0.6;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
     }
 
     .empty-state h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-      font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 12px;
+      font-weight: 800;
       color: var(--text-primary);
+      letter-spacing: -0.5px;
     }
 
     .empty-state p {
-      font-size: 14px;
-      opacity: 0.8;
+      font-size: 16px;
+      opacity: 0.7;
+      font-weight: 500;
     }
 
     /* Scrollbar Styling */
@@ -683,7 +1062,9 @@
 
     /* Content padding */
     .content {
-      padding: 20px;
+      padding: 12px 16px;
+      max-height: calc(100vh - 140px);
+      overflow-y: auto;
     }
   </style>
 </head>
@@ -724,16 +1105,12 @@
   <div class="tab-content active" id="search-tab">
     <div class="content">
       <div class="input-group">
-        <label class="input-label">Search Memes</label>
-        <input type="text" id="searchInput" placeholder="Enter keyword...">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Hindi Memes</label>
-        <input type="text" id="hindiSearchInput" placeholder="हिंदी मेम्स खोजें...">
+        <label class="input-label">Search All Sources (All Languages Supported)</label>
+        <input type="text" id="searchInput" placeholder="Search in any language...">
       </div>
       <div class="loading-container" id="searchLoading">
         <div class="spinner"></div>
-        <p style="margin-top: 16px; color: var(--text-secondary);">Loading memes...</p>
+        <p style="margin-top: 16px; color: var(--text-secondary);">Searching across all sources...</p>
       </div>
       <div class="gallery" id="gallery"></div>
       <button class="btn btn-primary" id="loadMoreBtn" style="width:100%; margin-top:16px; display:none;">
@@ -806,93 +1183,103 @@
       </div>
       <div class="modal-controls">
         <button class="btn btn-primary" id="addTextBtn">
-          <i class="fas fa-font"></i> Add Text
+          <i class="fas fa-font"></i> <span>Add Text</span>
         </button>
-        <button class="btn btn-secondary" id="filtersBtn">
-          <i class="fas fa-sliders-h"></i> Filters
+        <button class="btn btn-primary" id="filtersBtn">
+          <i class="fas fa-sliders-h"></i> <span>Filters</span>
         </button>
-        <button class="btn btn-secondary" id="downloadBtn">
-          <i class="fas fa-download"></i> Download
+        <button class="btn btn-primary" id="downloadBtn">
+          <i class="fas fa-download"></i> <span>Download</span>
         </button>
-        <button class="btn btn-secondary" id="copyBtn">
-          <i class="fas fa-copy"></i> Copy
-        </button>
-        <button class="btn btn-secondary" id="shareBtn">
-          <i class="fas fa-share"></i> Share
+        <button class="btn btn-primary" id="copyBtn">
+          <i class="fas fa-copy"></i> <span>Copy</span>
         </button>
       </div>
       
       <!-- Text Editor Section -->
       <div class="text-editor" id="textEditor" style="display:none;">
-        <h3 style="margin-bottom:16px; font-size:16px;">✨ Live Text Editor <span style="font-size:12px; color:var(--text-secondary); font-weight:normal;">(Drag text to reposition)</span></h3>
-        <textarea id="textInput" placeholder="Type here... text appears on image in real-time!" style="width:100%; padding:10px; border-radius:8px; border:2px solid var(--border); background:var(--bg-primary); color:var(--text-primary); min-height:80px; font-size:14px; resize:vertical;"></textarea>
+        <h3 style="margin-bottom:16px; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+          <i class="fas fa-font" style="color:var(--primary);"></i>
+          Add Text
+          <span style="font-size:11px; color:var(--text-secondary); font-weight:normal; margin-left:auto;">(Drag to move)</span>
+        </h3>
+        <textarea id="textInput" placeholder="Type your text here..." style="width:100%; padding:12px 16px; border-radius:12px; border:2px solid var(--border); background:var(--bg-primary); color:var(--text-primary); min-height:100px; font-size:14px; resize:vertical; transition: all 0.3s; box-shadow: 0 2px 4px var(--shadow); margin-bottom:12px;"></textarea>
         
-        <div class="control-row" style="margin-top:12px;">
-          <div class="input-group">
-            <label class="input-label">Font Family</label>
-            <select id="fontFamily">
-              <option value="Impact">Impact</option>
-              <option value="Arial">Arial</option>
-              <option value="Comic Sans MS">Comic Sans</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Courier New">Courier New</option>
-            </select>
-          </div>
-          
-          <div class="input-group">
-            <label class="input-label">Quick Position</label>
-            <select id="textPosition">
-              <option value="custom">Custom (Drag)</option>
-              <option value="top">Top</option>
-              <option value="center">Center</option>
-              <option value="bottom">Bottom</option>
-            </select>
-          </div>
-        </div>
+        <button class="btn btn-secondary" id="toggleAdvancedOptions" style="width:100%; margin-bottom:12px;">
+          <i class="fas fa-cog"></i> <span>Show Advanced Options</span>
+        </button>
 
-        <div class="control-row">
-          <div class="input-group">
-            <label class="input-label">Font Size: <span id="fontSizeValue">40</span>px</label>
-            <input type="range" id="fontSize" min="20" max="100" value="40">
-          </div>
-          
-          <div class="input-group">
-            <label class="input-label">Text Color</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="textColor" value="#ffffff">
-              <span style="font-size:13px; color:var(--text-secondary);">White</span>
+        <div id="advancedTextOptions" style="display:none;">
+          <div class="control-row" style="margin-top:12px;">
+            <div class="input-group">
+              <label class="input-label">Font Family</label>
+              <select id="fontFamily">
+                <option value="Impact">Impact</option>
+                <option value="Arial">Arial</option>
+                <option value="Comic Sans MS">Comic Sans</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+              </select>
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label">Quick Position</label>
+              <select id="textPosition">
+                <option value="custom">Custom (Drag)</option>
+                <option value="top">Top</option>
+                <option value="center">Center</option>
+                <option value="bottom">Bottom</option>
+              </select>
             </div>
           </div>
-        </div>
 
-        <div class="control-row">
-          <div class="input-group">
-            <label class="input-label">Stroke Color</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="strokeColor" value="#000000">
-              <span style="font-size:13px; color:var(--text-secondary);">Black</span>
+          <div class="control-row">
+            <div class="input-group">
+              <label class="input-label">Font Size: <span id="fontSizeValue">40</span>px</label>
+              <input type="range" id="fontSize" min="20" max="100" value="40">
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label">Text Color</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="textColor" value="#ffffff">
+                <span style="font-size:13px; color:var(--text-secondary);">White</span>
+              </div>
             </div>
           </div>
-          
-          <div class="input-group">
-            <label class="input-label">Stroke Width: <span id="strokeWidthValue">4</span>px</label>
-            <input type="range" id="strokeWidth" min="0" max="10" value="4">
+
+          <div class="control-row">
+            <div class="input-group">
+              <label class="input-label">Stroke Color</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="strokeColor" value="#000000">
+                <span style="font-size:13px; color:var(--text-secondary);">Black</span>
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label">Stroke Width: <span id="strokeWidthValue">4</span>px</label>
+              <input type="range" id="strokeWidth" min="0" max="10" value="4">
+            </div>
           </div>
         </div>
 
         <div style="display:flex; gap:12px; margin-top:16px;">
           <button class="btn btn-primary" id="applyTextBtn" style="flex:1;">
-            <i class="fas fa-check"></i> Apply Text
+            <i class="fas fa-check"></i> <span>Apply Text</span>
           </button>
-          <button class="btn btn-secondary" id="cancelTextBtn">
-            <i class="fas fa-times"></i> Cancel
+          <button class="btn btn-secondary" id="cancelTextBtn" style="min-width:100px;">
+            <i class="fas fa-times"></i> <span>Cancel</span>
           </button>
         </div>
       </div>
 
       <!-- Filter Controls -->
       <div class="filter-controls" id="filterControls" style="display:none;">
-        <h3 style="margin-bottom:16px; font-size:16px;">Image Filters</h3>
+        <h3 style="margin-bottom:16px; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+          <i class="fas fa-sliders-h" style="color:var(--primary);"></i>
+          Image Filters
+        </h3>
         
         <div class="filter-slider">
           <div class="filter-label">
@@ -928,10 +1315,10 @@
 
         <div style="display:flex; gap:12px; margin-top:16px;">
           <button class="btn btn-primary" id="applyFiltersBtn" style="flex:1;">
-            <i class="fas fa-magic"></i> Apply Filters
+            <i class="fas fa-magic"></i> <span>Apply Filters</span>
           </button>
-          <button class="btn btn-secondary" id="resetFiltersBtn">
-            <i class="fas fa-undo"></i> Reset
+          <button class="btn btn-secondary" id="resetFiltersBtn" style="min-width:100px;">
+            <i class="fas fa-undo"></i> <span>Reset</span>
           </button>
         </div>
       </div>

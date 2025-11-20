@@ -151,7 +151,6 @@ function showToast(message, duration = 3000) {
 // Search Tab
 function initializeSearchTab() {
   const searchInput = document.getElementById('searchInput');
-  const hindiSearchInput = document.getElementById('hindiSearchInput');
   const gallery = document.getElementById('gallery');
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   
@@ -160,14 +159,12 @@ function initializeSearchTab() {
   searchInput.addEventListener('input', (e) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
-      searchMemes(e.target.value);
-    }, 500);
-  });
-
-  hindiSearchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      searchHindiMemes(e.target.value);
+      const query = e.target.value.trim();
+      if (query) {
+        searchAllSources(query);
+      } else {
+        fetchAllMemes();
+      }
     }, 500);
   });
 
@@ -175,97 +172,334 @@ function initializeSearchTab() {
     renderMoreMemes();
   });
 
-  // Load initial memes
-  fetchMemes();
+  // Infinite scroll for gallery
+  let scrollCount = 0;
+  gallery.addEventListener('scroll', () => {
+    const scrollPosition = gallery.scrollTop + gallery.clientHeight;
+    const scrollThreshold = gallery.scrollHeight - 100; // 100px before bottom
+
+    if (scrollPosition >= scrollThreshold) {
+      scrollCount++;
+      if (scrollCount >= 2 && loadMoreBtn.style.display !== 'none') {
+        renderMoreMemes();
+        scrollCount = 0; // Reset counter
+      }
+    } else if (scrollPosition < scrollThreshold - 200) {
+      scrollCount = 0; // Reset if user scrolls back up
+    }
+  });
+
+  // Load initial memes from all sources
+  fetchAllMemes();
 }
 
-async function fetchMemes() {
+// Fetch from all sources in parallel
+async function fetchAllMemes() {
   const loading = document.getElementById('searchLoading');
   const gallery = document.getElementById('gallery');
   
   loading.classList.add('show');
+  console.log('Fetching memes from all sources...');
+  
+  const promises = [
+    fetchFromImgflip(),
+    fetchFromReddit(),
+    fetchFromTenor(),
+    fetchFromMemegen()
+  ];
   
   try {
-    const response = await fetch('https://api.imgflip.com/get_memes');
-    const data = await response.json();
-    if (data.success) {
-      allMemes = data.data.memes;
-      renderMemes(allMemes.slice(0, 20));
-      document.getElementById('loadMoreBtn').style.display = 'block';
+    const results = await Promise.allSettled(promises);
+    const allResults = [];
+    
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled' && result.value && result.value.length > 0) {
+        console.log(`Source ${index} returned ${result.value.length} memes`);
+        allResults.push(...result.value);
+      } else {
+        console.log(`Source ${index} failed or returned no memes`);
+      }
+    });
+    
+    console.log(`Total memes fetched: ${allResults.length}`);
+    
+    if (allResults.length > 0) {
+      allMemes = allResults;
+      renderMemes(allMemes.slice(0, 30));
+      document.getElementById('loadMoreBtn').style.display = allMemes.length > 30 ? 'block' : 'none';
+    } else {
+      gallery.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error Loading Memes</h3><p>Please try again later</p></div>';
     }
   } catch (error) {
+    console.error('Error in fetchAllMemes:', error);
     gallery.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error Loading Memes</h3><p>Please try again later</p></div>';
   } finally {
     loading.classList.remove('show');
   }
 }
 
-function searchMemes(query) {
-  if (!query.trim()) {
-    renderMemes(allMemes.slice(0, 20));
+// Search across all sources
+async function searchAllSources(query) {
+  const loading = document.getElementById('searchLoading');
+  const gallery = document.getElementById('gallery');
+  
+  if (!query) {
+    fetchAllMemes();
     return;
   }
-
-  const filtered = allMemes.filter(meme => 
-    meme.name.toLowerCase().includes(query.toLowerCase())
-  );
-  renderMemes(filtered.slice(0, 20));
-}
-
-async function searchHindiMemes(query) {
-  if (!query.trim()) return;
-
-  const loading = document.getElementById('searchLoading');
+  
   loading.classList.add('show');
-
+  
+  const promises = [
+    searchImgflip(query),
+    searchReddit(query),
+    searchTenor(query),
+    searchMemegen(query)
+  ];
+  
   try {
-    const response = await fetch(`https://meme-api.com/gimme/desimemes/20`);
-    const data = await response.json();
-    if (data.memes) {
-      renderMemes(data.memes);
+    const results = await Promise.allSettled(promises);
+    const allResults = [];
+    
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && result.value) {
+        allResults.push(...result.value);
+      }
+    });
+    
+    if (allResults.length > 0) {
+      allMemes = allResults;
+      renderMemes(allMemes);
+      document.getElementById('loadMoreBtn').style.display = 'none';
+    } else {
+      gallery.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i><h3>No Results</h3><p>Try a different search term</p></div>';
     }
   } catch (error) {
-    showToast('Error loading Hindi memes', 3000);
+    gallery.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error Searching</h3><p>Please try again</p></div>';
   } finally {
     loading.classList.remove('show');
   }
 }
 
+// Individual API fetchers with normalization
+async function fetchFromImgflip() {
+  try {
+    const response = await fetch('https://api.imgflip.com/get_memes');
+    const data = await response.json();
+    if (data.success) {
+      return data.data.memes.slice(0, 25).map(meme => ({
+        url: meme.url,
+        name: meme.name,
+        title: meme.name,
+        provider: 'imgflip'
+      }));
+    }
+  } catch (error) {
+    console.error('Imgflip error:', error);
+  }
+  return [];
+}
+
+async function fetchFromReddit() {
+  try {
+    const response = await fetch('https://meme-api.com/gimme/25');
+    const data = await response.json();
+    if (data.memes) {
+      return data.memes.map(meme => ({
+        url: meme.url,
+        name: meme.title,
+        title: meme.title,
+        provider: 'reddit'
+      }));
+    }
+  } catch (error) {
+    console.error('Reddit error:', error);
+  }
+  return [];
+}
+
+async function fetchFromTenor() {
+  try {
+    const API_KEY = 'AIzaSyDQoNMrC__r4T2usDVymTHnkmxw1P0vQZM';
+    const CLIENT_KEY = 'meme_studio_app';
+    const response = await fetch(`https://tenor.googleapis.com/v2/featured?key=${API_KEY}&client_key=${CLIENT_KEY}&limit=25`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.results && data.results.length > 0) {
+        return data.results.map(gif => ({
+          url: gif.media_formats.gif?.url || gif.media_formats.tinygif?.url,
+          name: gif.content_description || 'Tenor GIF',
+          title: gif.content_description || 'Tenor GIF',
+          provider: 'tenor'
+        }));
+      }
+    }
+    console.warn('Tenor API not accessible, skipping');
+  } catch (error) {
+    console.error('Tenor error:', error);
+  }
+  return [];
+}
+
+async function fetchFromMemegen() {
+  try {
+    const response = await fetch('https://api.memegen.link/templates/');
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      return data.slice(0, 25).map(template => ({
+        url: template.blank,
+        name: template.name,
+        title: template.name,
+        provider: 'memegen'
+      }));
+    }
+  } catch (error) {
+    console.error('Memegen error:', error);
+  }
+  return [];
+}
+
+// Individual search functions
+async function searchImgflip(query) {
+  try {
+    const response = await fetch('https://api.imgflip.com/get_memes');
+    const data = await response.json();
+    if (data.success) {
+      return data.data.memes
+        .filter(meme => meme.name.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 20)
+        .map(meme => ({
+          url: meme.url,
+          name: meme.name,
+          title: meme.name,
+          provider: 'imgflip'
+        }));
+    }
+  } catch (error) {
+    console.error('Imgflip search error:', error);
+  }
+  return [];
+}
+
+async function searchReddit(query) {
+  try {
+    const response = await fetch(`https://meme-api.com/gimme/${encodeURIComponent(query)}/20`);
+    const data = await response.json();
+    if (data.memes) {
+      return data.memes.map(meme => ({
+        url: meme.url,
+        name: meme.title,
+        title: meme.title,
+        provider: 'reddit'
+      }));
+    }
+  } catch (error) {
+    console.error('Reddit search error:', error);
+  }
+  return [];
+}
+
+async function searchTenor(query) {
+  try {
+    const API_KEY = 'AIzaSyDQoNMrC__r4T2usDVymTHnkmxw1P0vQZM';
+    const CLIENT_KEY = 'meme_studio_app';
+    const response = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${API_KEY}&client_key=${CLIENT_KEY}&limit=20`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.results && data.results.length > 0) {
+        return data.results.map(gif => ({
+          url: gif.media_formats.gif?.url || gif.media_formats.tinygif?.url,
+          name: gif.content_description || 'Tenor GIF',
+          title: gif.content_description || 'Tenor GIF',
+          provider: 'tenor'
+        }));
+      }
+    }
+    console.warn('Tenor search not accessible, skipping');
+  } catch (error) {
+    console.error('Tenor search error:', error);
+  }
+  return [];
+}
+
+async function searchMemegen(query) {
+  try {
+    const response = await fetch('https://api.memegen.link/templates/');
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      return data
+        .filter(template => template.name.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 20)
+        .map(template => ({
+          url: template.blank,
+          name: template.name,
+          title: template.name,
+          provider: 'memegen'
+        }));
+    }
+  } catch (error) {
+    console.error('Memegen search error:', error);
+  }
+  return [];
+}
+
 function renderMemes(memes) {
+  console.log('renderMemes called with', memes.length, 'memes');
   const gallery = document.getElementById('gallery');
+  
+  if (!gallery) {
+    console.error('Gallery element not found!');
+    return;
+  }
   
   if (memes.length === 0) {
     gallery.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i><h3>No Memes Found</h3><p>Try a different search term</p></div>';
     return;
   }
 
-  gallery.innerHTML = memes.map(meme => `
-    <div class="gallery-item" data-url="${meme.url}" data-title="${meme.name || meme.title || ''}">
-      <img class="gallery-img" src="${meme.url}" alt="${meme.name || meme.title || 'Meme'}" loading="lazy">
-      <div class="gallery-overlay">
-        <i class="fas fa-edit"></i>
-      </div>
-    </div>
-  `).join('');
-  
-  gallery.querySelectorAll('.gallery-item').forEach(item => {
-    item.addEventListener('click', function() {
-      openEditor(this.dataset.url, this.dataset.title);
+  try {
+    gallery.innerHTML = memes.map(meme => {
+      const gifBadge = meme.provider === 'tenor' ? '<div class="provider-badge giphy"><i class="fas fa-image"></i> GIF</div>' : '';
+      return `
+        <div class="gallery-item" data-url="${meme.url}" data-title="${meme.name || meme.title || ''}">
+          ${gifBadge}
+          <img class="gallery-img" src="${meme.url}" alt="${meme.name || meme.title || 'Meme'}" loading="lazy">
+          <div class="gallery-overlay">
+            <i class="fas fa-edit"></i>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    console.log('Gallery HTML updated successfully');
+    
+    gallery.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', function() {
+        openEditor(this.dataset.url, this.dataset.title);
+      });
     });
-  });
+  } catch (error) {
+    console.error('Error in renderMemes:', error);
+  }
 }
 
 function renderMoreMemes() {
   const gallery = document.getElementById('gallery');
   const currentCount = gallery.children.length;
-  const nextMemes = allMemes.slice(currentCount, currentCount + 20);
+  const nextMemes = allMemes.slice(currentCount, currentCount + 30);
   
   nextMemes.forEach(meme => {
     const div = document.createElement('div');
     div.className = 'gallery-item';
-    div.addEventListener('click', () => openEditor(meme.url, meme.name || ''));
+    div.addEventListener('click', () => openEditor(meme.url, meme.name || meme.title || ''));
+    
+    const gifBadge = meme.provider === 'tenor' ? '<div class="provider-badge giphy"><i class="fas fa-image"></i> GIF</div>' : '';
+    
     div.innerHTML = `
-      <img class="gallery-img" src="${meme.url}" alt="${meme.name || 'Meme'}" loading="lazy">
+      ${gifBadge}
+      <img class="gallery-img" src="${meme.url}" alt="${meme.name || meme.title || 'Meme'}" loading="lazy">
       <div class="gallery-overlay">
         <i class="fas fa-edit"></i>
       </div>
@@ -273,7 +507,7 @@ function renderMoreMemes() {
     gallery.appendChild(div);
   });
 
-  if (currentCount + 20 >= allMemes.length) {
+  if (currentCount + 30 >= allMemes.length) {
     document.getElementById('loadMoreBtn').style.display = 'none';
   }
 }
@@ -302,6 +536,24 @@ function initializeTrendingTab() {
     renderMoreTrendingMemes();
   });
 
+  // Infinite scroll for trending gallery
+  const trendingGallery = document.getElementById('trendingGallery');
+  let trendingScrollCount = 0;
+  trendingGallery.addEventListener('scroll', () => {
+    const scrollPosition = trendingGallery.scrollTop + trendingGallery.clientHeight;
+    const scrollThreshold = trendingGallery.scrollHeight - 100;
+
+    if (scrollPosition >= scrollThreshold) {
+      trendingScrollCount++;
+      if (trendingScrollCount >= 2 && document.getElementById('loadMoreTrendingBtn').style.display !== 'none') {
+        renderMoreTrendingMemes();
+        trendingScrollCount = 0;
+      }
+    } else if (scrollPosition < scrollThreshold - 200) {
+      trendingScrollCount = 0;
+    }
+  });
+
   // Load initial trending memes
   fetchTrendingMemes('memeapi');
 }
@@ -314,12 +566,13 @@ async function fetchTrendingMemes(api) {
   
   try {
     let url;
+    const TENOR_KEY = 'AIzaSyDQoNMrC__r4T2usDVymTHnkmxw1P0vQZM';
     switch(api) {
       case 'imgflip':
         url = 'https://api.imgflip.com/get_memes';
         break;
-      case 'giphy':
-        url = 'https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC&limit=50&rating=g';
+      case 'tenor':
+        url = `https://tenor.googleapis.com/v2/featured?key=${TENOR_KEY}&client_key=meme_studio_app&limit=50`;
         break;
       case 'memegen':
         url = 'https://api.memegen.link/templates/';
@@ -335,10 +588,10 @@ async function fetchTrendingMemes(api) {
     if (api === 'imgflip' && data.success) {
       trendingMemes = data.data.memes;
       renderTrendingMemes(trendingMemes.slice(0, 20));
-    } else if (api === 'giphy' && data.data) {
-      trendingMemes = data.data.map(gif => ({
-        url: gif.images.fixed_height.url,
-        title: gif.title
+    } else if (api === 'tenor' && data.results) {
+      trendingMemes = data.results.map(gif => ({
+        url: gif.media_formats.gif?.url || gif.media_formats.tinygif?.url,
+        title: gif.content_description || 'Tenor GIF'
       }));
       renderTrendingMemes(trendingMemes.slice(0, 20));
     } else if (api === 'memegen' && Array.isArray(data)) {
@@ -545,11 +798,21 @@ function initializeModal() {
     document.getElementById('draggableText').style.display = 'none';
     document.getElementById('textInput').value = '';
     document.getElementById('textContent').textContent = '';
+    document.getElementById('advancedTextOptions').style.display = 'none';
+  });
+
+  // Toggle advanced options
+  document.getElementById('toggleAdvancedOptions').addEventListener('click', function() {
+    const advancedOptions = document.getElementById('advancedTextOptions');
+    const isVisible = advancedOptions.style.display !== 'none';
+    advancedOptions.style.display = isVisible ? 'none' : 'block';
+    this.innerHTML = isVisible 
+      ? '<i class="fas fa-cog"></i> <span>Show Advanced Options</span>'
+      : '<i class="fas fa-cog"></i> <span>Hide Advanced Options</span>';
   });
 
   downloadBtn.addEventListener('click', downloadMeme);
   copyBtn.addEventListener('click', copyMeme);
-  shareBtn.addEventListener('click', () => showToast('Share feature coming soon!'));
 
   // Text controls with live preview
   document.getElementById('textInput').addEventListener('input', updateTextPreview);
@@ -770,13 +1033,22 @@ function applyText() {
   newImg.crossOrigin = 'anonymous';
   
   newImg.onload = () => {
-    canvas.width = newImg.width;
-    canvas.height = newImg.height;
+    // For GIFs, use the displayed image dimensions to maintain quality
+    const isGif = img.src.toLowerCase().includes('.gif');
+    
+    if (isGif) {
+      // For GIFs, use natural dimensions
+      canvas.width = newImg.naturalWidth || newImg.width;
+      canvas.height = newImg.naturalHeight || newImg.height;
+    } else {
+      canvas.width = newImg.width;
+      canvas.height = newImg.height;
+    }
 
     // Apply current filters
     applyCanvasFilters(ctx, canvas);
 
-    ctx.drawImage(newImg, 0, 0);
+    ctx.drawImage(newImg, 0, 0, canvas.width, canvas.height);
 
     // Calculate scale ratio between displayed image and actual canvas
     const scaleX = canvas.width / img.offsetWidth;
@@ -813,6 +1085,7 @@ function applyText() {
       ctx.fillText(line, canvasX + (10 * scaleX), lineY);
     });
 
+    // Convert to PNG for better compatibility
     img.src = canvas.toDataURL('image/png');
     currentImage = img.src;
     
@@ -820,6 +1093,7 @@ function applyText() {
     document.getElementById('draggableText').style.display = 'none';
     document.getElementById('textInput').value = '';
     document.getElementById('textContent').textContent = '';
+    document.getElementById('advancedTextOptions').style.display = 'none';
     showToast('✨ Text applied successfully!');
   };
 
@@ -862,16 +1136,37 @@ function downloadMeme() {
 async function copyMeme() {
   try {
     const img = document.getElementById('modalImage');
-    const response = await fetch(img.src);
-    const blob = await response.blob();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     
-    await navigator.clipboard.write([
-      new ClipboardItem({ [blob.type]: blob })
-    ]);
+    // Create a new image to avoid CORS issues
+    const tempImg = new Image();
+    tempImg.crossOrigin = 'anonymous';
     
-    showToast('Meme copied to clipboard!');
+    tempImg.onload = async () => {
+      canvas.width = tempImg.width;
+      canvas.height = tempImg.height;
+      ctx.drawImage(tempImg, 0, 0);
+      
+      try {
+        canvas.toBlob(async (blob) => {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          showToast('✓ Meme copied to clipboard!');
+        }, 'image/png');
+      } catch (error) {
+        showToast('⚠ Copy failed. Try download instead.');
+      }
+    };
+    
+    tempImg.onerror = () => {
+      showToast('⚠ Unable to copy. Try download instead.');
+    };
+    
+    tempImg.src = img.src;
   } catch (error) {
-    showToast('Copy failed. Try download instead.');
+    showToast('⚠ Copy not supported. Try download instead.');
   }
 }
 

